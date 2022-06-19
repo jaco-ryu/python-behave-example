@@ -3,7 +3,7 @@ from clickhouse_driver import Client
 TARGET_URL = "localhost"
 
 DDL = """
-    DROP DATABASE IF EXISTS dev_beluga;
+DROP DATABASE IF EXISTS dev_beluga;
 DROP DATABASE IF EXISTS dev_mysql_service_dm;
 DROP TABLE IF EXISTS dev_mysql_service_dm.brand_ad_conversion;
 DROP TABLE IF EXISTS dev_beluga.ad_action;
@@ -272,6 +272,10 @@ LTA = "LTA"
 LBA = "LBA"
 WCK = "WCK"
 
+CPC = "CPC"
+CPM = "CPM"
+
+
 def upsert_click_house_query(query):
     Client(TARGET_URL).execute(query)
 
@@ -338,8 +342,8 @@ consumed_at
 '{}'
 );"""
 
-SEARCH_LISTING_FILTER_LOG_RAW_INSERT = """
-INSERT INTO dev_beluga.search_listing_filter_log_raw (
+
+SEARCH_LISTING_FILTER_LOG_RAW_INSERT = """INSERT INTO dev_beluga.search_listing_filter_log_raw (
 idx, 
 ad_payment_raw_idx, 
 account_id, 
@@ -406,8 +410,8 @@ consumed_at
 );
 """
 
-BRAND_FILTER_LOG_RAW_INSERT = """
-INSERT INTO dev_beluga.brand_filter_log_raw (
+
+BRAND_FILTER_LOG_RAW_INSERT = """INSERT INTO dev_beluga.brand_filter_log_raw (
 idx, 
 ad_payment_raw_idx, 
 account_id, 
@@ -474,8 +478,8 @@ consumed_at
 );
 """
 
-AD_ACTION_RAW_INSERT = """
-INSERT INTO dev_beluga.ad_action (
+
+AD_ACTION_RAW_INSERT = """INSERT INTO dev_beluga.ad_action (
 datetime, 
 userid, 
 platform, 
@@ -510,28 +514,29 @@ dt,
 guid, 
 consumed_at
 ) VALUES (
-'2022-04-11T10:32:47+0900', 
+'{}', 
 'woongretailceo', 
 'ANDROID', 
 '10', 
 '4.32.0', 
 '소매_거래처목록_추천거래처', 
-'CLR', '소매_상품목록_전체신상', 
+'CLR', 
+'소매_상품목록_전체신상', 
 'TTN', 
 'eb60ff53-c46b-452d-9061-44e2df00912b', 
 '0445ebf0ed8dc87b3f6eb3119ab90a6568d6e80295676632f7eb8024ffc136ca', 
 132, 
-'CPC', 
-'WCK', 
+'{}', 
+'{}', 
 132, 
 4, 
 'f2d3fc36-c71b-424b-82f2-a42c1e4b2e69', 
 '660321f7-fbb7-4c65-a94e-9526762cd466', 
-'2022-04-11T10:32:30.156+09:00', 
-20491, 
+'{}', 
+{}, 
 1649640767882, 
 125, 
-2808, 
+{}, 
 11, 
 null, 
 null, 
@@ -541,12 +546,12 @@ null,
 '0fcee104-fddc-3520-8bb9-b01dca5ebe35', 
 '2022-04-11', 
 '652881da-7599-4e9c-b5c0-9e494c67a68f', 
-'2022-04-11 10:32:47'
+'{}'
 );
 """
 
-AD_PAYMENT_RAW_INSERT = """
-INSERT INTO dev_beluga.ad_payment (
+
+AD_PAYMENT_RAW_INSERT = """INSERT INTO dev_beluga.ad_payment (
 idx, 
 id, 
 account_id, 
@@ -573,9 +578,72 @@ pay_free_amount,
 guid, 
 consumed_at
 ) VALUES (
-116020, '882a4199-8faf-4239-a816-517d913a314b', '087c9def-5039-43bb-a5b5-0212e3b55f16', 67, 67, 1, 20286, 2.00, 0.00, 2, 1, 1, 'AUTO', '', '2022-03-16 19:33:00', '2022-03-16 19:34:00', '2022-03-16 19:36:00', '2022-03-16 19:36:00', 99798, '2022-03-16 19:36:00', '[오픈리스팅] 광고 사용', 2, 0, '28499328-3d57-4cd3-a350-66492f724006', '2022-03-16 19:36:03');
+{}, 
+'882a4199-8faf-4239-a816-517d913a314b', 
+'087c9def-5039-43bb-a5b5-0212e3b55f16', 
+67, 
+67, 
+{}, 
+{}, 
+2.00, 
+0.00, 
+{}, 
+1, 
+1, 
+'AUTO', 
+'', 
+'{}', 
+'{}', 
+'{}', 
+'{}', 
+99798, 
+'{}',  
+'[오픈리스팅] 광고 사용', 
+{}, 
+0, 
+'28499328-3d57-4cd3-a350-66492f724006', 
+'{}'
+);
 """
 
-AD_PAYMENT_CREATIVE_RAW_INSERT = """
 
+AD_PAYMENT_CREATIVE_RAW_INSERT = """INSERT INTO dev_beluga.ad_payment_by_creative (
+idx, 
+ws_idx, 
+account_id, 
+campaign_idx, 
+product_idx, 
+group_idx, 
+creative_idx, 
+window_start, 
+window_end, 
+charging_type, 
+amount, 
+vat, 
+vat_amount, 
+created_at, 
+keyword_idx, 
+query, 
+guid, 
+consumed_at
+) VALUES (
+{}, 
+{}, 
+'087c9def-5039-43bb-a5b5-0212e3b55f16', 
+67, 
+{}, 
+67, 
+{}, 
+'{}',
+'{}', 
+'CPM', 
+2.00, 
+0.20, 
+{}, 
+'{}', 
+0, 
+'null', 
+'2336fdeb-cd5e-436e-aa18-3df05cd28a3d', 
+'{}'
+);
 """
