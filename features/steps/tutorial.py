@@ -157,7 +157,7 @@ def insert_ad_action_visit(
 
 
 @when(
-    '과금이 wsIdx가 {ws_idx}인 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 {price:d}원으로 {row_count:d}회 발생했다.')
+    '과금이 wsIdx가 {ws_idx}인 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 무상으로 {price:d}원 {row_count:d}회 발생했다.')
 def insert_ad_payment(
         context, ws_idx, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
 ):
@@ -165,7 +165,37 @@ def insert_ad_payment(
         query = AD_PAYMENT_RAW_INSERT.format(
             next(counter), product_idx, ws_idx, price,
             yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
-            yyyy_mm_dd_hh_mm_ss, price, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, 0, price, yyyy_mm_dd_hh_mm_ss
+        )
+        upsert_click_house_query(query)
+    pass
+
+
+@when(
+    '과금이 wsIdx가 {ws_idx}인 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {price:d}원 {row_count:d}회 발생했다.')
+def insert_ad_payment(
+        context, ws_idx, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
+):
+    for i in range(row_count):
+        query = AD_PAYMENT_RAW_INSERT.format(
+            next(counter), product_idx, ws_idx, price,
+            yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss, price, 0, yyyy_mm_dd_hh_mm_ss
+        )
+        upsert_click_house_query(query)
+    pass
+
+
+@when(
+    '과금이 wsIdx가 {ws_idx}인 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {paid_price:d}원, 무상으로 {free_price:d}원 {row_count:d}회 발생했다.')
+def insert_ad_payment(
+        context, ws_idx, product_idx, yyyy_mm_dd_hh_mm_ss, paid_price: int, free_price: int, row_count: int
+):
+    for i in range(row_count):
+        query = AD_PAYMENT_RAW_INSERT.format(
+            next(counter), product_idx, ws_idx, paid_price + free_price,
+            yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss, paid_price, free_price, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
