@@ -25,6 +25,11 @@ def clear_and_create_schema(context):
     pass
 
 
+@given('광고테스트를 위한 기존 스키마를 그대로 이용한다.')
+def do_nothing_schema(context):
+    pass
+
+
 @when(
     '오픈리스팅광고로 wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 노출이 {yyyy_mm_dd_hh_mm_ss}의 시점에 비딩가가 {bid_price}원인 {count}번이 들어간 하나의 노출 row가 {row_count:d}회 쌓인다.')
 def insert_open_listing_filter_log_raw_imp(
