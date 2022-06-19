@@ -172,22 +172,6 @@ def insert_ad_payment(
 
 
 @when(
-    '{count:d}개의 계정으로 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {price:d}원 {row_count:d}회 발생했다.')
-def insert_ad_payment(
-        context, count: int, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
-):
-    for i in range(count):
-        for k in range(row_count):
-            query = AD_PAYMENT_RAW_INSERT.format(
-                next(counter), product_idx, i, price,
-                yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
-                yyyy_mm_dd_hh_mm_ss, price, 0, yyyy_mm_dd_hh_mm_ss
-            )
-            upsert_click_house_query(query)
-    pass
-
-
-@when(
     '과금이 wsIdx가 {ws_idx}인 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {price:d}원 {row_count:d}회 발생했다.')
 def insert_ad_payment(
         context, ws_idx, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
@@ -214,6 +198,22 @@ def insert_ad_payment(
             yyyy_mm_dd_hh_mm_ss, paid_price, free_price, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
+    pass
+
+
+@when(
+    '{count:d}개의 계정으로 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {price:d}원 {row_count:d}회 발생했다.')
+def insert_ad_payment(
+        context, count: int, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
+):
+    for i in range(count):
+        for k in range(row_count):
+            query = AD_PAYMENT_RAW_INSERT.format(
+                next(counter), product_idx, i, price,
+                yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
+                yyyy_mm_dd_hh_mm_ss, price, 0, yyyy_mm_dd_hh_mm_ss
+            )
+            upsert_click_house_query(query)
     pass
 
 
