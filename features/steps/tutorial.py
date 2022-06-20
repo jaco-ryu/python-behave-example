@@ -8,7 +8,7 @@ from QUERY.clickhouse import upsert_click_house_query, IMP, GCK, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
     LTA, LBA, WCK, CPC, CPM, \
     init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
-    correct_ad_payment_average_data
+    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data
 
 counter = itertools.count()
 next(counter)
@@ -250,6 +250,17 @@ def step_impl(context):
 
 @then('평균 데이터 보정')
 def correct_average_data(context):
-    correct_ad_payment_average_data('2022-06-06 00:00:00', '2022-06-12 23:59:59')
-    correct_ad_payment_average_data('2022-06-13 00:00:00', '2022-06-19 23:59:59')
+    previous_week = ['2022-06-06 00:00:00', '2022-06-12 23:59:59']
+    this_week = ['2022-06-13 00:00:00', '2022-06-19 23:59:59']
+    correct_ad_payment_average_data(previous_week[0], previous_week[1])
+    correct_ad_payment_average_data(this_week[0], this_week[1])
+
+    correct_openlisting_average_data(previous_week[0], previous_week[1])
+    correct_openlisting_average_data(this_week[0], this_week[1])
+
+    correct_searchlisting_average_data(previous_week[0], previous_week[1])
+    correct_searchlisting_average_data(this_week[0], this_week[1])
+
+    correct_brand_average_data(previous_week[0], previous_week[1])
+    correct_brand_average_data(this_week[0], this_week[1])
     pass

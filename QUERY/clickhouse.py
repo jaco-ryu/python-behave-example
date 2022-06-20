@@ -2,6 +2,7 @@ import clickhouse_driver
 from clickhouse_driver import Client
 import json
 from datetime import datetime
+import math
 
 TARGET_URL = "localhost"
 
@@ -786,3 +787,187 @@ def correct_ad_payment_average_data_internal(
             types_check=True
     )
 
+
+def correct_openlisting_average_data(
+        start_datetime_str,
+        end_datetime_str
+):
+    target_average_click_rate = 4.5
+    insert_query = """insert into dev_beluga.open_listing_filter_log_raw (idx, ad_payment_raw_idx, account_id, campaign_idx, group_idx, ws_idx, product_idx, unit_idx, page_idx, platform, os_version, app_version, creative_idx, bid_price, count, created_at, updated_at, selection_id, event, rs_idx, user_id, window_start, window_end, charging_type, filter_code, filtered_at, cd_idx, guid, consumed_at) values"""
+
+    payment_data = Client(TARGET_URL).execute(
+        f"""SELECT sumIf(count, event = 'GCK' and filter_code = 'none') clickCount, 
+                   sumIf(count, event = 'IMP') exposureCount,
+                   toDecimal32(if((exposureCount = 0 and clickCount > 0) or exposureCount = 0, toFloat32(clickCount) * 100, clickCount / exposureCount * 100), 2) AS clickRate, 
+                   MAX(idx) max_idx
+            FROM dev_beluga.open_listing_filter_log_raw 
+            WHERE created_at >= '{start_datetime_str}' 
+            and created_at <= '{end_datetime_str}'"""
+    )
+    click_count = payment_data[0][0]
+    exposure_count = payment_data[0][1]
+    click_rate = payment_data[0][2]
+    max_idx = payment_data[0][3]
+    parsed_datetime = datetime.fromisoformat(start_datetime_str)
+
+    if click_rate < target_average_click_rate:
+        amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
+        if 0 < amount_to_add:
+            Client(TARGET_URL).execute(
+                insert_query,
+                [{"idx": max_idx + 10,
+                  "ad_payment_raw_idx": 148840,
+                  "account_id": "5e09f986-67d8-49c4-a219-beea5b5d9865",
+                  "campaign_idx": 262,
+                  "group_idx": 262,
+                  "ws_idx": 297473,
+                  "product_idx": 1,
+                  "unit_idx": 81,
+                  "page_idx": 4,
+                  "platform": "ANDROID",
+                  "os_version": "9",
+                  "app_version": "4.29.1",
+                  "creative_idx": 293372,
+                  "bid_price": 30001,
+                  "count": amount_to_add,
+                  "created_at": parsed_datetime,
+                  "updated_at": parsed_datetime,
+                  "selection_id": "ae5cd882-5ded-4fd6-b92b-b8dd073350b6",
+                  "event": "GCK",
+                  "rs_idx": 174324,
+                  "user_id": "sooki",
+                  "window_start": parsed_datetime,
+                  "window_end": parsed_datetime,
+                  "charging_type": "CPM",
+                  "filter_code": "none",
+                  "filtered_at": parsed_datetime,
+                  "cd_idx": 49,
+                  "guid": "fc177402-0f2d-44b7-8dc7-2f957762725e",
+                  "consumed_at": parsed_datetime
+                  }],
+                types_check=True
+            )
+
+def correct_searchlisting_average_data(
+        start_datetime_str,
+        end_datetime_str
+):
+    target_average_click_rate = 4.5
+    insert_query = """INSERT INTO dev_beluga.search_listing_filter_log_raw (idx, ad_payment_raw_idx, account_id, campaign_idx, group_idx, ws_idx, product_idx, unit_idx, page_idx, platform, os_version, app_version, creative_idx, bid_price, count, created_at, updated_at, selection_id, event, rs_idx, user_id, window_start, window_end, query, charging_type, filter_code, filtered_at, keyword_idx, cd_idx, guid, consumed_at) VALUES"""
+
+    payment_data = Client(TARGET_URL).execute(
+        f"""SELECT sumIf(count, event = 'GCK' and filter_code = 'none') clickCount, 
+                   sumIf(count, event = 'IMP') exposureCount,
+                   toDecimal32(if((exposureCount = 0 and clickCount > 0) or exposureCount = 0, toFloat32(clickCount) * 100, clickCount / exposureCount * 100), 2) AS clickRate, 
+                   MAX(idx) max_idx
+            FROM dev_beluga.search_listing_filter_log_raw 
+            WHERE created_at >= '{start_datetime_str}' 
+            and created_at <= '{end_datetime_str}'"""
+    )
+    click_count = payment_data[0][0]
+    exposure_count = payment_data[0][1]
+    click_rate = payment_data[0][2]
+    max_idx = payment_data[0][3]
+    parsed_datetime = datetime.fromisoformat(start_datetime_str)
+
+    if click_rate < target_average_click_rate:
+        amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
+        if 0 < amount_to_add:
+            Client(TARGET_URL).execute(
+                insert_query,
+                [{"idx": max_idx + 10,
+                  "ad_payment_raw_idx": 0,
+                  "account_id": "eb60ff53-c46b-452d-9061-44e2df00912b",
+                  "campaign_idx": 262,
+                  "group_idx": 262,
+                  "ws_idx": 206672,
+                  "product_idx": 1,
+                  "unit_idx": 81,
+                  "page_idx": 4,
+                  "platform": "ANDROID",
+                  "os_version": "9",
+                  "app_version": "4.29.1",
+                  "creative_idx": 219369,
+                  "bid_price": 30001,
+                  "count": amount_to_add,
+                  "created_at": parsed_datetime,
+                  "updated_at": parsed_datetime,
+                  "selection_id": "f08b0bc8-d759-4289-a5be-cba190ba60b2",
+                  "event": "GCK",
+                  "rs_idx": 174324,
+                  "user_id": "yoonj_22",
+                  "window_start": parsed_datetime,
+                  "window_end": parsed_datetime,
+                  "query": "",
+                  "charging_type": "CPC",
+                  "filter_code": "none",
+                  "filtered_at": parsed_datetime,
+                  "keyword_idx": 5756,
+                  "cd_idx": 49,
+                  "guid": "d6fad3ec-50fb-4f83-abfe-9bb308cf7f96",
+                  "consumed_at": parsed_datetime
+                  }],
+                types_check=True
+            )
+
+def correct_brand_average_data(
+        start_datetime_str,
+        end_datetime_str
+):
+    target_average_click_rate = 4.5
+    insert_query = """INSERT INTO dev_beluga.brand_filter_log_raw (idx, ad_payment_raw_idx, account_id, campaign_idx, group_idx, ws_idx, product_idx, unit_idx, page_idx, platform, os_version, app_version, creative_idx, bid_price, count, created_at, updated_at, selection_id, event, rs_idx, user_id, window_start, window_end, query, charging_type, filter_code, filtered_at, keyword_idx, cd_idx, guid, consumed_at) VALUES"""
+
+    payment_data = Client(TARGET_URL).execute(
+        f"""SELECT sumIf(count, event = 'GCK' and filter_code = 'none') clickCount, 
+                   sumIf(count, event = 'IMP') exposureCount,
+                   toDecimal32(if((exposureCount = 0 and clickCount > 0) or exposureCount = 0, toFloat32(clickCount) * 100, clickCount / exposureCount * 100), 2) AS clickRate, 
+                   MAX(idx) max_idx
+            FROM dev_beluga.brand_filter_log_raw 
+            WHERE created_at >= '{start_datetime_str}' 
+            and created_at <= '{end_datetime_str}'"""
+    )
+    click_count = payment_data[0][0]
+    exposure_count = payment_data[0][1]
+    click_rate = payment_data[0][2]
+    max_idx = payment_data[0][3]
+    parsed_datetime = datetime.fromisoformat(start_datetime_str)
+
+    if click_rate < target_average_click_rate:
+        amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
+        if 0 < amount_to_add:
+            Client(TARGET_URL).execute(
+                insert_query,
+                [{"idx": max_idx + 10,
+                  "ad_payment_raw_idx": 0,
+                  "account_id": "eb60ff53-c46b-452d-9061-44e2df00912b",
+                  "campaign_idx": 262,
+                  "group_idx": 262,
+                  "ws_idx": 206672,
+                  "product_idx": 1,
+                  "unit_idx": 81,
+                  "page_idx": 4,
+                  "platform": "ANDROID",
+                  "os_version": "9",
+                  "app_version": "4.29.1",
+                  "creative_idx": 219369,
+                  "bid_price": 30001,
+                  "count": amount_to_add,
+                  "created_at": parsed_datetime,
+                  "updated_at": parsed_datetime,
+                  "selection_id": "f08b0bc8-d759-4289-a5be-cba190ba60b2",
+                  "event": "GCK",
+                  "rs_idx": 174324,
+                  "user_id": "yoonj_22",
+                  "window_start": parsed_datetime,
+                  "window_end": parsed_datetime,
+                  "query": "",
+                  "charging_type": "CPC",
+                  "filter_code": "none",
+                  "filtered_at": parsed_datetime,
+                  "keyword_idx": 5756,
+                  "cd_idx": 49,
+                  "guid": "d6fad3ec-50fb-4f83-abfe-9bb308cf7f96",
+                  "consumed_at": parsed_datetime
+                  }],
+                types_check=True
+            )
