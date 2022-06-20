@@ -250,6 +250,6 @@ def step_impl(context):
 
 @then('평균 데이터 보정')
 def correct_average_data(context):
+    correct_ad_payment_average_data('2022-06-06 00:00:00', '2022-06-12 23:59:59')
     correct_ad_payment_average_data('2022-06-13 00:00:00', '2022-06-19 23:59:59')
-    correct_ad_payment_average_data('2022-06-20 00:00:00', '2022-06-26 23:59:59')
     pass
