@@ -6,7 +6,9 @@ from QUERY.clickhouse import upsert_click_house_query, IMP, GCK, \
     DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
-    LTA, LBA, WCK, CPC, CPM
+    LTA, LBA, WCK, CPC, CPM, \
+    init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
+    correct_ad_payment_average_data
 
 counter = itertools.count()
 next(counter)
@@ -24,6 +26,13 @@ def clear_and_create_schema(context):
                 raise
     pass
 
+@given('광고테스트를 위한 평균 데이터를 생성한다.')
+def init_average_data(context):
+    init_ad_payment_average_data()
+    init_openlisting_average_data()
+    init_searchlisting_average_data()
+    init_brand_average_data()
+    pass
 
 @given('광고테스트를 위한 기존 스키마를 그대로 이용한다.')
 def do_nothing_schema(context):
@@ -237,3 +246,10 @@ def step_impl(context):
     # for item in Client('localhost').execute('SHOW DATABASES'):
     #    sys.stdout.write("stdout:%s;\n" % item)
     assert context.failed is False
+
+
+@then('평균 데이터 보정')
+def correct_average_data(context):
+    correct_ad_payment_average_data('2022-06-13 00:00:00', '2022-06-19 23:59:59')
+    correct_ad_payment_average_data('2022-06-20 00:00:00', '2022-06-26 23:59:59')
+    pass
