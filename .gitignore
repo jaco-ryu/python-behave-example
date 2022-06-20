@@ -3,3 +3,4 @@
 /.idea/python-behave-example.iml
 /.idea/vcs.xml
 /.idea/.gitignore
+QUERY/__pycache__/
