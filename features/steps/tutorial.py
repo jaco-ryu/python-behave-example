@@ -37,7 +37,7 @@ def insert_open_listing_filter_log_raw_imp(
 ):
     for i in range(row_count):
         query = OPEN_LISTING_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, IMP, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
@@ -52,7 +52,7 @@ def insert_open_listing_filter_log_raw_gck(
 ):
     for i in range(row_count):
         query = OPEN_LISTING_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, GCK, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
@@ -67,7 +67,7 @@ def insert_search_listing_filter_log_raw_imp(
 ):
     for i in range(row_count):
         query = SEARCH_LISTING_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, IMP, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
@@ -82,7 +82,7 @@ def insert_search_listing_filter_log_raw_gck(
 ):
     for i in range(row_count):
         query = SEARCH_LISTING_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, GCK, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
@@ -97,7 +97,7 @@ def insert_brand_filter_log_raw_imp(
 ):
     for i in range(row_count):
         query = BRAND_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, IMP, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
@@ -112,7 +112,7 @@ def insert_brand_filter_log_raw_gck(
 ):
     for i in range(row_count):
         query = BRAND_FILTER_LOG_RAW_INSERT.format(
-            next(counter), ws_idx, bid_price, count, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            next(counter), ws_idx, creative_idx, bid_price, count, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss, GCK, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
