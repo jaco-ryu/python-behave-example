@@ -756,6 +756,7 @@ def correct_ad_payment_average_data_internal(
 
     amount_to_add = target_average_amount * (count_of_payment + 1) - total_payment
     if amount_to_add < 0:
+        # TODO amount_to_add가 0보다 낮으면 과금 정보 개수를 늘려서 보정
         return
     Client(TARGET_URL).execute(
         insert_query,
@@ -811,6 +812,7 @@ def correct_openlisting_average_data(
     parsed_datetime = datetime.fromisoformat(start_datetime_str)
 
     if click_rate < target_average_click_rate:
+        # TODO target_average_click_rate 보다 현재 click_rate가 크면 exposure count를 계산해서 늘려야 한다
         amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
         if 0 < amount_to_add:
             Client(TARGET_URL).execute(
@@ -871,6 +873,7 @@ def correct_searchlisting_average_data(
     parsed_datetime = datetime.fromisoformat(start_datetime_str)
 
     if click_rate < target_average_click_rate:
+        # TODO target_average_click_rate 보다 현재 click_rate가 크면 exposure count를 계산해서 늘려야 한다
         amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
         if 0 < amount_to_add:
             Client(TARGET_URL).execute(
@@ -933,6 +936,7 @@ def correct_brand_average_data(
     parsed_datetime = datetime.fromisoformat(start_datetime_str)
 
     if click_rate < target_average_click_rate:
+        # TODO target_average_click_rate 보다 현재 click_rate가 크면 exposure count를 계산해서 늘려야 한다
         amount_to_add = math.ceil(exposure_count * target_average_click_rate / 100) - click_count
         if 0 < amount_to_add:
             Client(TARGET_URL).execute(
