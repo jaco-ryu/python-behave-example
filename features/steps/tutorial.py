@@ -296,7 +296,7 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, a
     elif product_idx == 3:
         assert ad_amount.vedio_total_payment == amount
     elif product_idx == 4:
-        assert ad_amount.vedio_total_payment == amount
+        assert ad_amount.brand_total_payment == amount
     else:
         assert True is False
 
