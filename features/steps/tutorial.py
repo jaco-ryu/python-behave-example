@@ -231,42 +231,40 @@ def insert_ad_payment_by_creative(
     pass
 
 
-@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 찜수는 {count}개이다.')
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 찜수는 {count:d}개이다.')
 def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
     result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
     ))
-    assert result[0][0] == int(count)
-
-    pass
+    assert result[0][0] == count
 
 
-@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 매장방문수는 {count}개이다.')
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 매장방문수는 {count:d}개이다.')
 def check_visit_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
     result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
     ))
-    assert result[0][1] == int(count)
-
-    pass
+    assert result[0][1] == count
 
 
-@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 클릭수는 {count}개이다.')
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 클릭수는 {count:d}개이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
     result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
     ))
-    assert result[0][0] == int(count)
-
-    pass
+    assert result[0][0] == count
 
 
-@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 노출수는 {count:d}개이다.')
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 노출수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
-    pass
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][1] == count
 
 
 @then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')

@@ -668,7 +668,7 @@ FROM (
 """
 
 SELECT_LIKE_VISIT_COUNT = """
-SELECT ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS likeCount
+SELECT ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS likeCount,
        ifNull(sumIf(event = 'WCK', 1), 0)                  AS wsVisitCount
 FROM dev_beluga.ad_action
 WHERE wsidx = {ws_idx}
