@@ -4,3 +4,5 @@
 /.idea/vcs.xml
 /.idea/.gitignore
 QUERY/__pycache__/
+MODEL/__pycache__/
+REPOSITORY/__pycache__/
