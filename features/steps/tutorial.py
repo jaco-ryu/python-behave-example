@@ -2,12 +2,16 @@ import itertools
 
 from behave import *
 
-from REPOSITORY.clickhouse import execute_click_house_multi_line_ddl, upsert_click_house_query, select_one_click_house_query
+from MODEL.AdAmount import AdAmount
+
+from REPOSITORY.clickhouse import execute_click_house_multi_line_ddl, upsert_click_house_query, \
+    select_one_click_house_query
 
 from QUERY.clickhouse import IMP, GCK, DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
-    SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, SELECT_AMOUNT, \
+    SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
+    SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     LTA, LBA, WCK, CPC, CPM
 
 counter = itertools.count()
@@ -242,22 +246,34 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, 
     pass
 
 
-@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 노출수는 {count}개이다.')
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 노출수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
     pass
 
 
-@then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx}인 총 과금액은 {amount}원이다.')
+@then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, amount):
-    pass
-
-
-@then('wsIdx가 {ws_idx}인 광고주의 과금액은 {amount}원이다.')
-def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, amount):
-    query = SELECT_AMOUNT.format(ws_idx)
+    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx)
     result = select_one_click_house_query(query)
-    result[1]
-    pass
+    ad_amount = AdAmount.getInstance(result)
+    if product_idx == 1:
+        assert ad_amount.openlisting_total_payment is amount
+    elif product_idx == 2:
+        assert ad_amount.searchlisting_total_payment is amount
+    elif product_idx == 3:
+        assert ad_amount.vedio_total_payment is amount
+    elif product_idx == 4:
+        assert ad_amount.vedio_total_payment is amount
+    else:
+        assert True is False
+
+
+@then('wsIdx가 {ws_idx}인 광고주의 과금액은 {amount:d}원이다.')
+def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, amount):
+    query = SELECT_AMOUNT_TOTAL_BY_WS_IDX.format(ws_idx)
+    result = select_one_click_house_query(query)
+    ad_amount = AdAmount.getInstance(result)
+    assert ad_amount.total_payment is amount
 
 
 @then('테스트 데이터 생성이 완료되었다.')
