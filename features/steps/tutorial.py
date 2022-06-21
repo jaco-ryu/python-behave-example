@@ -288,8 +288,7 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
 @then('wsIdx가 {ws_idx}인 광고주에 클릭수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx(context, ws_idx, count):
     sql = SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(ws_idx=ws_idx)
-    result = select_one_click_house_query(sql)
-    print("{} = {} = {}".format(result[0][0], count, sql))
+    result = select_one_click_house_query(sql)  # print("{} = {} = {}".format(result[0][0], count, sql))
     assert result[0][0] == count
 
 
