@@ -10,9 +10,12 @@ from REPOSITORY.clickhouse import execute_click_house_multi_line_ddl, upsert_cli
 from QUERY.clickhouse import IMP, GCK, DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
+    init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
+    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data
     SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     LTA, LBA, WCK, CPC, CPM
+  
 
 counter = itertools.count()
 next(counter)
@@ -23,6 +26,13 @@ def clear_and_create_schema(context):
     execute_click_house_multi_line_ddl(DDL)
     pass
 
+@given('광고테스트를 위한 평균 데이터를 생성한다.')
+def init_average_data(context):
+    init_ad_payment_average_data()
+    init_openlisting_average_data()
+    init_searchlisting_average_data()
+    init_brand_average_data()
+    pass
 
 @given('광고테스트를 위한 기존 스키마를 그대로 이용한다.')
 def do_nothing_schema(context):
@@ -297,3 +307,21 @@ def step_impl(context):
     # for item in Client('localhost').execute('SHOW DATABASES'):
     #    sys.stdout.write("stdout:%s;\n" % item)
     assert context.failed is False
+
+
+@then('평균 데이터 보정')
+def correct_average_data(context):
+    previous_week = ['2022-06-06 00:00:00', '2022-06-12 23:59:59']
+    this_week = ['2022-06-13 00:00:00', '2022-06-19 23:59:59']
+    correct_ad_payment_average_data(previous_week[0], previous_week[1])
+    correct_ad_payment_average_data(this_week[0], this_week[1])
+
+    correct_openlisting_average_data(previous_week[0], previous_week[1])
+    correct_openlisting_average_data(this_week[0], this_week[1])
+
+    correct_searchlisting_average_data(previous_week[0], previous_week[1])
+    correct_searchlisting_average_data(this_week[0], this_week[1])
+
+    correct_brand_average_data(previous_week[0], previous_week[1])
+    correct_brand_average_data(this_week[0], this_week[1])
+    pass
