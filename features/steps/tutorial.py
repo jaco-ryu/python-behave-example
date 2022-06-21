@@ -233,16 +233,34 @@ def insert_ad_payment_by_creative(
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 찜수는 {count}개이다.')
 def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][0] == int(count)
+
     pass
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 매장방문수는 {count}개이다.')
 def check_visit_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][1] == int(count)
+
     pass
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 클릭수는 {count}개이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][0] == int(count)
+
     pass
 
 
