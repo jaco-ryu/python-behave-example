@@ -2,13 +2,20 @@ import itertools
 
 from behave import *
 
-from QUERY.clickhouse import upsert_click_house_query, IMP, GCK, \
-    DDL, \
+from MODEL.AdAmount import AdAmount
+
+from REPOSITORY.clickhouse import execute_click_house_multi_line_ddl, upsert_click_house_query, \
+    select_one_click_house_query
+
+from QUERY.clickhouse import IMP, GCK, DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
-    LTA, LBA, WCK, CPC, CPM, \
     init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
     correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data
+    SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
+    SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
+    LTA, LBA, WCK, CPC, CPM
+  
 
 counter = itertools.count()
 next(counter)
@@ -16,14 +23,7 @@ next(counter)
 
 @given('광고테스트를 위한 스키마를 생성한다.')
 def clear_and_create_schema(context):
-    for query in DDL.split(";"):
-        sql = query.strip()
-        if not '' == sql or not "" == sql:
-            try:
-                upsert_click_house_query(sql + ";")
-            except:
-                print("SQL ERROR : | {} |".format(sql))
-                raise
+    execute_click_house_multi_line_ddl(DDL)
     pass
 
 @given('광고테스트를 위한 평균 데이터를 생성한다.')
@@ -239,6 +239,67 @@ def insert_ad_payment_by_creative(
         )
         upsert_click_house_query(query)
     pass
+
+
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 찜수는 {count:d}개이다.')
+def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][0] == count
+
+
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 매장방문수는 {count:d}개이다.')
+def check_visit_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][1] == count
+
+
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 클릭수는 {count:d}개이다.')
+def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][0] == count
+
+
+@then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 노출수는 {count:d}개이다.')
+def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
+        ws_idx=ws_idx,
+        creative_idx=creative_idx
+    ))
+    assert result[0][1] == count
+
+
+@then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
+def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, amount):
+    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx)
+    result = select_one_click_house_query(query)
+    ad_amount = AdAmount.getInstance(result)
+    if product_idx == 1:
+        assert ad_amount.openlisting_total_payment is amount
+    elif product_idx == 2:
+        assert ad_amount.searchlisting_total_payment is amount
+    elif product_idx == 3:
+        assert ad_amount.vedio_total_payment is amount
+    elif product_idx == 4:
+        assert ad_amount.vedio_total_payment is amount
+    else:
+        assert True is False
+
+
+@then('wsIdx가 {ws_idx}인 광고주의 과금액은 {amount:d}원이다.')
+def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, amount):
+    query = SELECT_AMOUNT_TOTAL_BY_WS_IDX.format(ws_idx)
+    result = select_one_click_house_query(query)
+    ad_amount = AdAmount.getInstance(result)
+    assert ad_amount.total_payment is amount
 
 
 @then('테스트 데이터 생성이 완료되었다.')
