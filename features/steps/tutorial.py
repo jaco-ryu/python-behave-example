@@ -141,7 +141,7 @@ def insert_ad_action_lta(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LTA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LTA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
@@ -153,7 +153,7 @@ def insert_ad_action_lba(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LBA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LBA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
@@ -165,7 +165,7 @@ def insert_ad_action_visit(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, WCK, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, WCK, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
