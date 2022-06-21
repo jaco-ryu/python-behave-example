@@ -11,7 +11,7 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
     init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
-    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data
+    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data, \
     SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     LTA, LBA, WCK, CPC, CPM

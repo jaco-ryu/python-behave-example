@@ -973,7 +973,8 @@ def correct_brand_average_data(
                   }],
                 types_check=True
             )
-=======
+
+
 SELECT_CLICK_EXPOSE_COUNT = """
 SELECT if(sum(GCK) IS NULL, 0, sum(GCK)) AS clickCount,
        if(sum(IMP) IS NULL, 0, sum(IMP)) AS exposureCount
