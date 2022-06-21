@@ -282,6 +282,11 @@ CPC = "CPC"
 CPM = "CPM"
 
 
+# FILTER CODE
+NOT_PAYMENT = "notPayment"
+NONE = "none"
+
+
 OPEN_LISTING_FILTER_LOG_RAW_INSERT = """INSERT INTO dev_beluga.open_listing_filter_log_raw (
 idx, 
 ad_payment_raw_idx, 
@@ -402,7 +407,7 @@ consumed_at
 '{}', 
 '', 
 'CPC', 
-'notPayment', 
+'none', 
 '{}', 
 5756, 
 0, 
@@ -469,7 +474,7 @@ consumed_at
 '{}', 
 '', 
 'CPC', 
-'notPayment', 
+'none', 
 '2022-03-15 16:17:16', 
 0, 
 0, 
@@ -995,8 +1000,10 @@ FROM (
                 sumIf(count, event = 'IMP')                          AS IMP
          FROM dev_beluga.brand_filter_log_raw
          WHERE ws_idx = {ws_idx}
-           AND creative_idx = {creative_idx})
+           AND creative_idx = {creative_idx}
+)
 """
+
 
 SELECT_LIKE_VISIT_COUNT = """
 SELECT ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS likeCount,

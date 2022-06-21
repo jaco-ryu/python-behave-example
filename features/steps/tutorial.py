@@ -243,10 +243,11 @@ def insert_ad_payment_by_creative(
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 찜수는 {count:d}개이다.')
 def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
-    result = select_one_click_house_query(SELECT_LIKE_VISIT_COUNT.format(
+    sql = SELECT_LIKE_VISIT_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
-    ))
+    ) # print(sql)
+    result = select_one_click_house_query(sql)
     assert result[0][0] == count
 
 
@@ -261,10 +262,11 @@ def check_visit_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 클릭수는 {count:d}개이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, count):
-    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
+    sql = SELECT_CLICK_EXPOSE_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
-    ))
+    )
+    result = select_one_click_house_query(sql) # print("{} --> {} = {}".format(sql, result[0][0], count))
     assert result[0][0] == count
 
 
@@ -279,17 +281,17 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
 
 @then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, amount):
-    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx)
+    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx) # print(query)
     result = select_one_click_house_query(query)
     ad_amount = AdAmount.getInstance(result)
     if product_idx == 1:
-        assert ad_amount.openlisting_total_payment is amount
+        assert ad_amount.openlisting_total_payment == amount
     elif product_idx == 2:
-        assert ad_amount.searchlisting_total_payment is amount
+        assert ad_amount.searchlisting_total_payment == amount
     elif product_idx == 3:
-        assert ad_amount.vedio_total_payment is amount
+        assert ad_amount.vedio_total_payment == amount
     elif product_idx == 4:
-        assert ad_amount.vedio_total_payment is amount
+        assert ad_amount.vedio_total_payment == amount
     else:
         assert True is False
 
@@ -299,7 +301,7 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, amount):
     query = SELECT_AMOUNT_TOTAL_BY_WS_IDX.format(ws_idx)
     result = select_one_click_house_query(query)
     ad_amount = AdAmount.getInstance(result)
-    assert ad_amount.total_payment is amount
+    assert ad_amount.total_payment == amount
 
 
 @then('테스트 데이터 생성이 완료되었다.')
