@@ -18,7 +18,8 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     LTA, LBA, WCK, CPC, CPM, \
     SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
-    SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_BRAND_CLICK_RATE_BY_CREATED_AT
+    SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, \
+    SELECT_BRAND_CLICK_RATE_BY_CREATED_AT, SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX
 
 counter = itertools.count()
 next(counter)
@@ -280,6 +281,21 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
     result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
+    ))
+    assert result[0][1] == count
+
+@then('wsIdx가 {ws_idx}인 광고주에 클릭수는 {count:d}개이다.')
+def check_expose_count_by_ws_idx(context, ws_idx, count):
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(
+        ws_idx=ws_idx
+    ))
+    assert result[0][0] == count
+
+
+@then('wsIdx가 {ws_idx}인 광고주에 노출수는 {count:d}개이다.')
+def check_expose_count_by_ws_idx(context, ws_idx, count):
+    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(
+        ws_idx=ws_idx
     ))
     assert result[0][1] == count
 

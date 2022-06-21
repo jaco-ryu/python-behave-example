@@ -1117,6 +1117,28 @@ FROM (
 """
 
 
+SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX = """
+SELECT if(sum(GCK) IS NULL, 0, sum(GCK)) AS clickCount,
+       if(sum(IMP) IS NULL, 0, sum(IMP)) AS exposureCount
+FROM (
+         SELECT sumIf(count, event = 'GCK')                          AS GCK,
+                sumIf(count, event = 'IMP' AND filter_code = 'none') AS IMP
+         FROM dev_beluga.open_listing_filter_log_raw
+         WHERE ws_idx = {ws_idx}
+         UNION ALL
+         SELECT sumIf(count, event = 'GCK' AND filter_code = 'none') AS GCK,
+                sumIf(count, event = 'IMP')                          AS IMP
+         FROM dev_beluga.search_listing_filter_log_raw
+         WHERE ws_idx = {ws_idx}
+         UNION ALL
+         SELECT sumIf(count, event = 'GCK' AND filter_code = 'none') AS GCK,
+                sumIf(count, event = 'IMP')                          AS IMP
+         FROM dev_beluga.brand_filter_log_raw
+         WHERE ws_idx = {ws_idx}
+)
+"""
+
+
 SELECT_LIKE_VISIT_COUNT = """
 SELECT ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS likeCount,
        ifNull(sumIf(event = 'WCK', 1), 0)                  AS wsVisitCount
