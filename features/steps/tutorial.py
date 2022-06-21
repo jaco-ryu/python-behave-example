@@ -10,12 +10,15 @@ from REPOSITORY.clickhouse import execute_click_house_multi_line_ddl, upsert_cli
 from QUERY.clickhouse import IMP, GCK, DDL, \
     OPEN_LISTING_FILTER_LOG_RAW_INSERT, SEARCH_LISTING_FILTER_LOG_RAW_INSERT, BRAND_FILTER_LOG_RAW_INSERT, \
     AD_ACTION_RAW_INSERT, AD_PAYMENT_CREATIVE_RAW_INSERT, AD_PAYMENT_RAW_INSERT, \
-    init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, init_brand_average_data, \
-    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, correct_brand_average_data, \
+    init_ad_payment_average_data, init_openlisting_average_data, init_searchlisting_average_data, \
+    init_brand_average_data, \
+    correct_ad_payment_average_data, correct_openlisting_average_data, correct_searchlisting_average_data, \
+    correct_brand_average_data, \
     SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
-    LTA, LBA, WCK, CPC, CPM
-  
+    LTA, LBA, WCK, CPC, CPM, \
+    SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
+    SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_BRAND_CLICK_RATE_BY_CREATED_AT
 
 counter = itertools.count()
 next(counter)
@@ -26,6 +29,7 @@ def clear_and_create_schema(context):
     execute_click_house_multi_line_ddl(DDL)
     pass
 
+
 @given('광고테스트를 위한 평균 데이터를 생성한다.')
 def init_average_data(context):
     init_ad_payment_average_data()
@@ -33,6 +37,7 @@ def init_average_data(context):
     init_searchlisting_average_data()
     init_brand_average_data()
     pass
+
 
 @given('광고테스트를 위한 기존 스키마를 그대로 이용한다.')
 def do_nothing_schema(context):
@@ -326,4 +331,69 @@ def correct_average_data(context):
 
     correct_brand_average_data(previous_week[0], previous_week[1])
     correct_brand_average_data(this_week[0], this_week[1])
+    pass
+
+
+@then('시작 일시가 {start_date_time} 이고 종료 일시가 {end_date_time} 인 평균 데이터 검증')
+def validate_average_data(context, start_date_time, end_date_time):
+
+    # 총액 평균 검증
+    target_total_amount_average = 30000
+
+    total_total_amount = select_one_click_house_query(
+        SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time
+        )
+    )
+    assert total_total_amount[0][0] == target_total_amount_average
+
+    openlisting_total_amount = select_one_click_house_query(
+        SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time,
+            product_idx=1
+        )
+    )
+    assert openlisting_total_amount[0][0] == target_total_amount_average
+
+    searchlisting_total_amount = select_one_click_house_query(
+        SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time,
+            product_idx=2
+        ))
+    assert searchlisting_total_amount[0][0] == target_total_amount_average
+
+    brand_total_amount = select_one_click_house_query(
+        SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time,
+            product_idx=4
+        ))
+    assert brand_total_amount[0][0] == target_total_amount_average
+
+    # 평균 클릭률 검증
+    target_click_rate = 4.5
+    openlisting_click_rate = select_one_click_house_query(
+        SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time
+        ))
+    assert openlisting_click_rate[0][0] == target_click_rate
+
+    searchlisting_click_rate = select_one_click_house_query(
+        SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time
+        ))
+    assert searchlisting_click_rate[0][0] == target_click_rate
+
+    brand_click_rate = select_one_click_house_query(
+        SELECT_BRAND_CLICK_RATE_BY_CREATED_AT.format(
+            start_date_time=start_date_time,
+            end_date_time=end_date_time
+        ))
+    assert brand_click_rate[0][0] == target_click_rate
+
     pass
