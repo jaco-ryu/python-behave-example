@@ -252,7 +252,7 @@ def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, c
     sql = SELECT_LIKE_VISIT_COUNT.format(
         ws_idx=ws_idx,
         creative_idx=creative_idx
-    ) # print(sql)
+    )  # print(sql)
     result = select_one_click_house_query(sql)
     assert result[0][0] == count
 
@@ -272,7 +272,7 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, 
         ws_idx=ws_idx,
         creative_idx=creative_idx
     )
-    result = select_one_click_house_query(sql) # print("{} --> {} = {}".format(sql, result[0][0], count))
+    result = select_one_click_house_query(sql)  # print("{} --> {} = {}".format(sql, result[0][0], count))
     assert result[0][0] == count
 
 
@@ -284,11 +284,12 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
     ))
     assert result[0][1] == count
 
+
 @then('wsIdx가 {ws_idx}인 광고주에 클릭수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx(context, ws_idx, count):
-    result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(
-        ws_idx=ws_idx
-    ))
+    sql = SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(ws_idx=ws_idx)
+    result = select_one_click_house_query(sql)
+    print("{} = {} = {}".format(result[0][0], count, sql))
     assert result[0][0] == count
 
 
@@ -302,7 +303,7 @@ def check_expose_count_by_ws_idx(context, ws_idx, count):
 
 @then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
 def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, amount):
-    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx) # print(query)
+    query = SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx)  # print(query)
     result = select_one_click_house_query(query)
     ad_amount = AdAmount.getInstance(result)
     if product_idx == 1:
@@ -352,7 +353,6 @@ def correct_average_data(context):
 
 @then('시작 일시가 {start_date_time} 이고 종료 일시가 {end_date_time} 인 평균 데이터 검증')
 def validate_average_data(context, start_date_time, end_date_time):
-
     # 총액 평균 검증
     target_total_amount_average = 30000
 
