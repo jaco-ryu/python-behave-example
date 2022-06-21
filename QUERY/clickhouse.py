@@ -1,4 +1,4 @@
-from clickhouse_driver import Client
+
 
 TARGET_URL = "localhost"
 
@@ -274,10 +274,6 @@ WCK = "WCK"
 
 CPC = "CPC"
 CPM = "CPM"
-
-
-def upsert_click_house_query(query):
-    Client(TARGET_URL).execute(query)
 
 
 OPEN_LISTING_FILTER_LOG_RAW_INSERT = """INSERT INTO dev_beluga.open_listing_filter_log_raw (
@@ -646,4 +642,39 @@ consumed_at
 '2336fdeb-cd5e-436e-aa18-3df05cd28a3d', 
 '{}'
 );
+"""
+
+
+SELECT_CLICK_EXPOSE_COUNT = """SELECT
+
+FROM 
+"""
+
+SELECT_LIKE_VISIT_COUNT = """SELECT
+
+FROM 
+"""
+
+
+SELECT_AMOUNT = """
+SELECT
+    ws_idx                                                          AS wsIdx,   /* 도매 아이디 */
+    ifNull(sumIf(pay_paid_amount, product_idx = 1), 0)              AS OPP,     /* openlistingPaidPayAmount,    오픈리스팅 유상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_free_amount, product_idx = 1), 0)              AS OFP,     /* openlistingFreePayAmount,    오픈리스팅 무상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(total_payment, product_idx = 1), 0)                AS OTP,     /* openlistingTotalPayment,     오픈리스팅 총 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_paid_amount, product_idx = 2), 0)              AS SPP,     /* searchlistingPaidPayAmount,  서치리스팅 유상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_free_amount, product_idx = 2), 0)              AS SFP,     /* searchlistingFreePayAmount,  서치리스팅 무상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(total_payment, product_idx = 2), 0)                AS STP,     /* searchlistingTotalPayment,   서치리스팅 총 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_paid_amount, product_idx = 3), 0)              AS VPP,     /* videoPaidPayAmount,          비디오 유상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_free_amount, product_idx = 3), 0)              AS VFP,     /* videoFreePayAmount,          비디오 무상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(total_payment, product_idx = 3), 0)                AS VTP,     /* videoTotalPayment,           비디오 총 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_paid_amount, product_idx = 4), 0)              AS BPP,     /* brandPaidPayAmount,          브랜드 유상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(pay_free_amount, product_idx = 4), 0)              AS BFP,     /* brandFreePayAmount,          브랜드 무상 기준 소진금액 (vat 포함) */
+    ifNull(sumIf(total_payment, product_idx = 4), 0)                AS BTP,     /* brandTotalPayment,           브랜드 총 소진금액 (vat 포함) */
+    ifNull(sum(pay_paid_amount), 0)                                 AS PPA,     /* paidPayAmount,               모든 광고 상품 유상 기준 소진금액 (vat 포함) */
+    ifNull(sum(pay_free_amount), 0)                                 AS FPA,     /* freePayAmount,               모든 광고 상품 무상 기준 소진금액 (vat 포함) */
+    ifNull(sum(total_payment), 0)                                   AS price    /* totalPayment,                모든 광고 상품 총 소진금액 (vat 포함) */
+FROM dev_beluga.ad_payment
+WHERE ws_idx = {} 
+GROUP BY ws_idx
 """
