@@ -4,9 +4,7 @@ import json
 from datetime import datetime
 import math
 
-
 TARGET_URL = "localhost"
-
 
 DDL = """
 DROP DATABASE IF EXISTS dev_beluga;
@@ -281,11 +279,9 @@ WCK = "WCK"
 CPC = "CPC"
 CPM = "CPM"
 
-
 # FILTER CODE
 NOT_PAYMENT = "notPayment"
 NONE = "none"
-
 
 OPEN_LISTING_FILTER_LOG_RAW_INSERT = """INSERT INTO dev_beluga.open_listing_filter_log_raw (
 idx, 
@@ -741,6 +737,19 @@ def correct_ad_payment_average_data_brand_listing(
     correct_ad_payment_average_data_internal(4, start_datetime_str, end_datetime_str)
 
 
+SELECT_CLICK_COUNT_EXPOSURE_COUNT_MAX_IDX_BY_PRODUCT_IDX_AND_CREATED_AT = """
+SELECT sum(total_payment) total_payment,
+       sum(count)        count,
+       (SELECT max(idx) FROM dev_beluga.ad_payment) AS max_idx,
+       total_payment / `count`
+FROM (
+         SELECT sum(pay_paid_amount + pay_free_amount) AS total_payment,
+                count(DISTINCT (ws_idx))               AS `count`
+         FROM dev_beluga.ad_payment 
+         WHERE product_idx = {product_idx} 
+         AND created_at >= '{start_datetime_str}' and created_at <= '{end_datetime_str}')
+"""
+
 def correct_ad_payment_average_data_internal(
         product_idx,
         start_datetime_str,
@@ -750,7 +759,11 @@ def correct_ad_payment_average_data_internal(
     insert_query = """insert into dev_beluga.ad_payment (idx, id, account_id, campaign_idx, group_idx, product_idx, ws_idx, total_amount, total_amount_vat, total_payment, is_payment, is_complete, method, s3_bucket_key, window_start, window_end, created_at, updated_at, pay_balance, pay_date, pay_message, pay_paid_amount, pay_free_amount, guid, consumed_at) values"""
 
     payment_data = Client(TARGET_URL).execute(
-        f"""SELECT SUM(pay_paid_amount + pay_free_amount) total_payment, COUNT(*) count_of_payment, MAX(idx) max_idx FROM dev_beluga.ad_payment WHERE product_idx = {product_idx} AND created_at >= '{start_datetime_str}' and created_at <= '{end_datetime_str}'"""
+        SELECT_CLICK_COUNT_EXPOSURE_COUNT_MAX_IDX_BY_PRODUCT_IDX_AND_CREATED_AT.format(
+            product_idx=product_idx,
+            start_datetime_str=start_datetime_str,
+            end_datetime_str=end_datetime_str
+        )
     )
     total_payment = payment_data[0][0]
     count_of_payment = payment_data[0][1]
@@ -788,7 +801,7 @@ def correct_ad_payment_average_data_internal(
           "guid": "28499328-3d57-4cd3-a350-66492f724006",
           "consumed_at": parsed_datetime
           }],
-            types_check=True
+        types_check=True
     )
 
 
@@ -888,6 +901,7 @@ def correct_openlisting_average_data(
                   }],
                 types_check=True
             )
+
 
 def correct_searchlisting_average_data(
         start_datetime_str,
@@ -989,6 +1003,7 @@ def correct_searchlisting_average_data(
                   }],
                 types_check=True
             )
+
 
 def correct_brand_average_data(
         start_datetime_str,
@@ -1116,7 +1131,6 @@ FROM (
 )
 """
 
-
 SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX = """
 SELECT if(sum(GCK) IS NULL, 0, sum(GCK)) AS clickCount,
        if(sum(IMP) IS NULL, 0, sum(IMP)) AS exposureCount
@@ -1138,7 +1152,6 @@ FROM (
 )
 """
 
-
 SELECT_LIKE_VISIT_COUNT = """
 SELECT ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS likeCount,
        ifNull(sumIf(event = 'WCK', 1), 0)                  AS wsVisitCount
@@ -1146,7 +1159,6 @@ FROM dev_beluga.ad_action
 WHERE wsidx = {ws_idx}
 AND creativeidx = {creative_idx}
 """
-
 
 SELECT_AMOUNT_TOTAL_BY_WS_IDX = """
 SELECT
@@ -1170,7 +1182,6 @@ FROM dev_beluga.ad_payment
 WHERE ws_idx = {} 
 GROUP BY ws_idx
 """
-
 
 SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX = """
 SELECT
@@ -1197,16 +1208,22 @@ GROUP BY ws_idx
 """
 
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
-SELECT AVG(pay_paid_amount + pay_free_amount)
-FROM dev_beluga.ad_payment
-WHERE created_at BETWEEN '{start_date_time}' AND '{end_date_time}'
+SELECT sum(total_payment) / sum(count)
+FROM (
+         SELECT sum(pay_paid_amount + pay_free_amount) AS total_payment,
+                count(DISTINCT (ws_idx))               AS count
+         FROM dev_beluga.ad_payment
+         WHERE created_at BETWEEN '{start_date_time}' AND '{end_date_time}')
 """
 
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT = """
-SELECT AVG(pay_paid_amount + pay_free_amount)
-FROM dev_beluga.ad_payment
-WHERE created_at BETWEEN '{start_date_time}' AND '{end_date_time}'
-AND product_idx = {product_idx}
+SELECT sum(total_payment) / sum(count)
+FROM (
+         SELECT sum(pay_paid_amount + pay_free_amount) AS total_payment,
+                count(DISTINCT (ws_idx))               AS count
+         FROM dev_beluga.ad_payment
+         WHERE created_at BETWEEN '{start_date_time}' AND '{end_date_time}'
+         AND product_idx = {product_idx})
 """
 
 SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT = """
