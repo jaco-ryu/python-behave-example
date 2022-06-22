@@ -141,7 +141,8 @@ def insert_ad_action_lta(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LTA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LTA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
@@ -153,7 +154,8 @@ def insert_ad_action_lba(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LBA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LBA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
@@ -165,7 +167,8 @@ def insert_ad_action_visit(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, WCK, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, WCK, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
@@ -254,7 +257,7 @@ def check_like_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, c
         creative_idx=creative_idx
     )  # print(sql)
     result = select_one_click_house_query(sql)
-    assert result[0][0] == count
+    assert_equals(result[0][0], count)
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 매장방문수는 {count:d}개이다.')
@@ -263,7 +266,7 @@ def check_visit_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, 
         ws_idx=ws_idx,
         creative_idx=creative_idx
     ))
-    assert result[0][1] == count
+    assert_equals(result[0][1], count)
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 클릭수는 {count:d}개이다.')
@@ -273,7 +276,7 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx, 
         creative_idx=creative_idx
     )
     result = select_one_click_house_query(sql)  # print("{} --> {} = {}".format(sql, result[0][0], count))
-    assert result[0][0] == count
+    assert_equals(result[0][0], count)
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx:d}인 노출수는 {count:d}개이다.')
@@ -282,14 +285,22 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
         ws_idx=ws_idx,
         creative_idx=creative_idx
     ))
-    assert result[0][1] == count
+    assert_equals(result[0][1], count)
+
+
+def assert_equals(actual, expected):
+    try:
+        assert actual == expected
+    except AssertionError as err:
+        print(f"actual: {actual}, expected: {expected}")
+        raise err
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 클릭수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx(context, ws_idx, count):
     sql = SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(ws_idx=ws_idx)
     result = select_one_click_house_query(sql)  # print("{} = {} = {}".format(result[0][0], count, sql))
-    assert result[0][0] == count
+    assert_equals(result[0][0], count)
 
 
 @then('wsIdx가 {ws_idx}인 광고주에 노출수는 {count:d}개이다.')
@@ -297,7 +308,7 @@ def check_expose_count_by_ws_idx(context, ws_idx, count):
     result = select_one_click_house_query(SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(
         ws_idx=ws_idx
     ))
-    assert result[0][1] == count
+    assert_equals(result[0][1], count)
 
 
 @then('wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
@@ -314,6 +325,7 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, a
     elif product_idx == 4:
         assert ad_amount.brand_total_payment == amount
     else:
+        print(f"product_idx: {product_idx}")
         assert True is False
 
 
