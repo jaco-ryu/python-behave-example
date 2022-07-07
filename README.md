@@ -29,7 +29,7 @@
  - docker 설치 https://www.docker.com/get-started/
    - 재시작 후 wsl2 설치
      - ![image](https://user-images.githubusercontent.com/107824702/177742287-7d99643d-bc8f-4ec0-8459-48758f647770.png)
+   - ![image](https://user-images.githubusercontent.com/107824702/177742633-919a377b-be5f-4031-a110-24208ba6af43.png)
 
-   - 
 
  
