@@ -1416,7 +1416,7 @@ AND creative_idx = {}
 
 BRAND_AD_CONVERSION_ALL_SELECT = """
 SELECT
-    ws_idx                                              AS wsIdx,
+    wsIdx                                               AS wsIdx,
     ifNull(sum(toUInt32(WISH)), 0)                      AS WISH,
     ifNull(sum(toUInt32(WCK)), 0)                       AS WCK,
     ifNull(sum(toUInt32(TRC)), 0)                       AS TRC,
@@ -1439,12 +1439,20 @@ SELECT
     0                                                   AS VC
 FROM dev_beluga.ad_action
 WHERE wsidx = {ws_idx}
-AND creativeidx = {creative_idx}
 )
 """
 
 
 BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX = """
+SELECT
+    wsIdx                                               AS wsIdx,
+    creativeIdx                                         As creativeIdx,
+    ifNull(sum(toUInt32(WISH)), 0)                      AS WISH,
+    ifNull(sum(toUInt32(WCK)), 0)                       AS WCK,
+    ifNull(sum(toUInt32(TRC)), 0)                       AS TRC,
+    ifNull(sum(toUInt32(VC)), 0)                        AS VC
+FROM 
+(
 SELECT
     ws_idx                                              AS wsIdx,
     creative_idx                                        AS creativeIdx,
@@ -1466,6 +1474,7 @@ SELECT
 FROM dev_beluga.ad_action
 WHERE wsidx = {}
 AND creativeidx = {}
+)
 """
 
 

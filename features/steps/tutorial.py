@@ -407,10 +407,10 @@ def check_brand_ad_conversion_all_by_creative_idx(
 ):
     query = BRAND_AD_CONVERSION_ALL_SELECT.format(ws_idx, ws_idx)
     result = select_one_click_house_query(query)
-    assert_equals(result[0][2], like_count)
-    assert_equals(result[0][3], ws_visit_count)
-    assert_equals(result[0][4], trade_request_count)
-    assert_equals(result[0][5], viewer_count)
+    assert_equals(result[0][1], like_count)
+    assert_equals(result[0][2], ws_visit_count)
+    assert_equals(result[0][3], trade_request_count)
+    assert_equals(result[0][4], viewer_count)
 
 
 @then(
