@@ -231,7 +231,7 @@ def insert_ad_payment(
 
 
 @when(
-    '외부전환 지표가 wsIdx가 {ws_idx}인 광고주에 {yyyy_mm_dd_hh_mm_ss}의 시점에 소재아이디가 {creative_idx:d}인 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+    '간접 전환 지표가 wsIdx가 {ws_idx}인 광고주에 {yyyy_mm_dd_hh_mm_ss}의 시점에 소재아이디가 {creative_idx:d}인 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
 def insert_brand_ad_conversion(
         context, ws_idx: int, yyyy_mm_dd_hh_mm_ss: str, creative_idx: int,
         like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int,
@@ -371,8 +371,8 @@ def check_ad_payment_by_creative_amount(context, ws_idx, amount: int):
     assert_equals(result[0][1], amount)
 
 
-@when(
-    '외부전환 지표가 wsIdx가 {ws_idx}인 광고주에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+@then(
+    '간접 전환 지표가 wsIdx가 {ws_idx}인 광고주에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
 def check_brand_ad_conversion(
         context, ws_idx: int, like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
 ):
@@ -384,8 +384,8 @@ def check_brand_ad_conversion(
     assert_equals(result[0][4], viewer_count)
 
 
-@when(
-    '외부전환 지표가 wsIdx가 {ws_idx:d}인 광고주의 {creative_idx:d}인 소재에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+@then(
+    '간접 전환 지표가 wsIdx가 {ws_idx:d}인 광고주의 {creative_idx:d}인 소재에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
 def check_brand_ad_conversion_by_creative_idx(
         context, ws_idx: int, creative_idx: int,
         like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
