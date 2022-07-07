@@ -19,6 +19,7 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX, \
     SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX_AND_PRODUCT_IDX, \
     BRAND_AD_CONVERSION_INSERT, BRAND_AD_CONVERSION_SELECT, BRAND_AD_CONVERSION_SELECT_BY_CREATIVE_IDX, \
+    BRAND_AD_CONVERSION_ALL_SELECT, BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX, \
     LTA, LBA, WCK, CPC, CPM, \
     SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
     SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, \
@@ -391,6 +392,34 @@ def check_brand_ad_conversion_by_creative_idx(
         like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
 ):
     query = BRAND_AD_CONVERSION_SELECT_BY_CREATIVE_IDX.format(ws_idx, creative_idx)
+    result = select_one_click_house_query(query)
+    assert_equals(result[0][2], like_count)
+    assert_equals(result[0][3], ws_visit_count)
+    assert_equals(result[0][4], trade_request_count)
+    assert_equals(result[0][5], viewer_count)
+
+
+@then(
+    '브랜드 광고 전환 지표가 wsIdx가 {ws_idx:d}인 광고주에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+def check_brand_ad_conversion_all_by_creative_idx(
+        context, ws_idx: int, creative_idx: int,
+        like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
+):
+    query = BRAND_AD_CONVERSION_ALL_SELECT.format(ws_idx, ws_idx)
+    result = select_one_click_house_query(query)
+    assert_equals(result[0][2], like_count)
+    assert_equals(result[0][3], ws_visit_count)
+    assert_equals(result[0][4], trade_request_count)
+    assert_equals(result[0][5], viewer_count)
+
+
+@then(
+    '브랜드 광고 전환 지표가 wsIdx가 {ws_idx:d}인 광고주의 {creative_idx:d}인 소재에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+def check_brand_ad_conversion_all_by_creative_idx(
+        context, ws_idx: int, creative_idx: int,
+        like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
+):
+    query = BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX.format(ws_idx, creative_idx, ws_idx, creative_idx)
     result = select_one_click_house_query(query)
     assert_equals(result[0][2], like_count)
     assert_equals(result[0][3], ws_visit_count)

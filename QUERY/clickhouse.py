@@ -1414,6 +1414,61 @@ AND creative_idx = {}
 """
 
 
+BRAND_AD_CONVERSION_ALL_SELECT = """
+SELECT
+    ws_idx                                              AS wsIdx,
+    ifNull(sum(toUInt32(WISH)), 0)                      AS WISH,
+    ifNull(sum(toUInt32(WCK)), 0)                       AS WCK,
+    ifNull(sum(toUInt32(TRC)), 0)                       AS TRC,
+    ifNull(sum(toUInt32(VC)), 0)                        AS VC
+FROM 
+(
+SELECT
+    ws_idx                                              AS wsIdx,
+    ifNull(sum(toUInt32(like_count)), 0)                AS WISH,
+    ifNull(sum(toUInt32(ws_visit_count)), 0)            AS WCK,
+    ifNull(sum(toUInt32(trade_request_count)), 0)       AS TRC,
+    ifNull(sum(toUInt32(viewer_count)), 0)              AS VC
+FROM dev_mysql_service_dm.brand_ad_conversion
+WHERE ws_idx = {}
+SELECT
+    ws_idx                                              AS wsIdx, 
+    ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS WISH,
+    ifNull(sumIf(event = 'WCK', 1), 0)                  AS WCK,
+    0                                                   AS TRC,
+    0                                                   AS VC
+FROM dev_beluga.ad_action
+WHERE wsidx = {ws_idx}
+AND creativeidx = {creative_idx}
+)
+"""
+
+
+BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX = """
+SELECT
+    ws_idx                                              AS wsIdx,
+    creative_idx                                        AS creativeIdx,
+    ifNull(sum(toUInt32(like_count)), 0)                AS WISH,
+    ifNull(sum(toUInt32(ws_visit_count)), 0)            AS WCK,
+    ifNull(sum(toUInt32(trade_request_count)), 0)       AS TRC,
+    ifNull(sum(toUInt32(viewer_count)), 0)              AS VC
+FROM dev_mysql_service_dm.brand_ad_conversion
+WHERE ws_idx = {}
+AND creative_idx = {}
+UNION ALL
+SELECT
+    ws_idx                                              AS wsIdx,
+    creative_idx                                        AS creativeIdx, 
+    ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS WISH,
+    ifNull(sumIf(event = 'WCK', 1), 0)                  AS WCK,
+    0                                                   AS TRC,
+    0                                                   AS VC
+FROM dev_beluga.ad_action
+WHERE wsidx = {}
+AND creativeidx = {}
+"""
+
+
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
 SELECT sum(total_payment) / sum(count)
 FROM (
