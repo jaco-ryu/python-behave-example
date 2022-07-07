@@ -1363,6 +1363,14 @@ AND product_idx = {}
 GROUP BY ws_idx
 """
 
+BRAND_AD_CONVERSION_INSERT = """
+INSERT INTO dev_mysql_service_dm.brand_ad_conversion (idx, ws_idx, creative_idx, like_count, ws_visit_count, trade_request_count, viewer_count, dt, updated_at, created_at) VALUES (9999991, 999999, 2611, 0, 0, 0, 3, '2018-09-28 18:00:00', '2018-09-28 19:54:40', '2018-09-28 19:54:40');
+"""
+
+BRAND_AD_CONVERSION_SELECT = """
+
+"""
+
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
 SELECT sum(total_payment) / sum(count)
 FROM (

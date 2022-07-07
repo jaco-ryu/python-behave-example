@@ -18,6 +18,7 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX, \
     SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX_AND_PRODUCT_IDX, \
+    BRAND_AD_CONVERSION_INSERT, BRAND_AD_CONVERSION_SELECT, \
     LTA, LBA, WCK, CPC, CPM, \
     SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
     SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, \
@@ -230,6 +231,23 @@ def insert_ad_payment(
 
 
 @when(
+    '외부전환 지표가 wsIdx가 {ws_idx}인 광고주에 {yyyy_mm_dd_hh_mm_ss}의 시점에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+def insert_brand_ad_conversion(
+        context, ws_idx: int, yyyy_mm_dd_hh_mm_ss: str,
+        like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int,
+        row_count: int
+):
+    for i in range(row_count):
+        query = BRAND_AD_CONVERSION_INSERT.format(
+            next(counter), ws_idx,
+            like_count, ws_visit_count, trade_request_count, viewer_count,
+            yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss,
+        )
+        upsert_click_house_query(query)
+    pass
+
+
+@when(
     '{count:d}개의 계정으로 광고주에 광고상품이 {product_idx}으로 {yyyy_mm_dd_hh_mm_ss}의 시점에 유상으로 {price:d}원 {row_count:d}회 발생했다.')
 def insert_ad_payment(
         context, count: int, product_idx, yyyy_mm_dd_hh_mm_ss, price: int, row_count: int
@@ -351,6 +369,19 @@ def check_ad_payment_by_creative_amount(context, ws_idx, amount: int):
     query = SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX.format(ws_idx)
     result = select_one_click_house_query(query)
     assert_equals(result[0][1], amount)
+
+
+@when(
+    '외부전환 지표가 wsIdx가 {ws_idx}인 광고주에 찜수 {like_count:d}건, 매장방문수 {ws_visit_count:d}건, 거래처 요청수 {trade_request_count:d}건, 광고 본 사용자 수 {viewer_count:d}건, {row_count:d}회 발생했다.')
+def check_brand_ad_conversion(
+        context, ws_idx: int, like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
+):
+    query = BRAND_AD_CONVERSION_SELECT.format(ws_idx)
+    result = select_one_click_house_query(query)
+    assert_equals(result[0][1], like_count)
+    assert_equals(result[0][2], ws_visit_count)
+    assert_equals(result[0][3], trade_request_count)
+    assert_equals(result[0][4], viewer_count)
 
 
 @then('테스트 데이터 생성이 완료되었다.')
