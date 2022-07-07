@@ -1364,12 +1364,55 @@ GROUP BY ws_idx
 """
 
 BRAND_AD_CONVERSION_INSERT = """
-INSERT INTO dev_mysql_service_dm.brand_ad_conversion (idx, ws_idx, creative_idx, like_count, ws_visit_count, trade_request_count, viewer_count, dt, updated_at, created_at) VALUES (9999991, 999999, 2611, 0, 0, 0, 3, '2018-09-28 18:00:00', '2018-09-28 19:54:40', '2018-09-28 19:54:40');
+INSERT INTO dev_mysql_service_dm.brand_ad_conversion (
+idx, 
+ws_idx, 
+creative_idx, 
+like_count, 
+ws_visit_count, 
+trade_request_count, 
+viewer_count, 
+dt, 
+updated_at, 
+created_at
+) VALUES (
+{}, 
+{}, 
+{}, 
+{}, 
+{}, 
+{}, 
+{}, 
+'{}', 
+'{}', 
+'{}'
+);
 """
 
 BRAND_AD_CONVERSION_SELECT = """
-
+SELECT
+    ws_idx                              AS wsIdx,
+    sum(toUInt32(ws_visit_count))       AS WCK,
+    sum(toUInt32(like_count))           AS WISH,
+    sum(toUInt32(trade_request_count))  AS TRC,
+    sum(toUInt32(viewer_count))         AS VC
+FROM dev_mysql_service_dm.brand_ad_conversion
+WHERE ws_idx = {}
 """
+
+BRAND_AD_CONVERSION_SELECT_BY_CREATIVE_IDX = """
+SELECT
+    ws_idx                              AS wsIdx,
+    creative_idx                        AS creativeIdx,
+    sum(toUInt32(ws_visit_count))       AS WCK,
+    sum(toUInt32(like_count))           AS WISH,
+    sum(toUInt32(trade_request_count))  AS TRC,
+    sum(toUInt32(viewer_count))         AS VC
+FROM dev_mysql_service_dm.brand_ad_conversion
+WHERE ws_idx = {}
+AND creative_idx = {}
+"""
+
 
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
 SELECT sum(total_payment) / sum(count)
