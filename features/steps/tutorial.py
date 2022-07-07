@@ -16,6 +16,7 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     correct_brand_average_data, \
     SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
+    SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX, \
     LTA, LBA, WCK, CPC, CPM, \
     SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
     SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, \
@@ -23,6 +24,14 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
 
 counter = itertools.count()
 next(counter)
+
+
+def assert_equals(actual, expected):
+    try:
+        assert actual == expected
+    except AssertionError as err:
+        print(f"actual: {actual}, expected: {expected}")
+        raise err
 
 
 @given('광고테스트를 위한 스키마를 생성한다.')
@@ -288,14 +297,6 @@ def check_expose_count_by_ws_idx_and_creative_idx(context, ws_idx, creative_idx,
     assert_equals(result[0][1], count)
 
 
-def assert_equals(actual, expected):
-    try:
-        assert actual == expected
-    except AssertionError as err:
-        print(f"actual: {actual}, expected: {expected}")
-        raise err
-
-
 @then('wsIdx가 {ws_idx}인 광고주에 클릭수는 {count:d}개이다.')
 def check_expose_count_by_ws_idx(context, ws_idx, count):
     sql = SELECT_CLICK_EXPOSE_COUNT_BY_WS_IDX.format(ws_idx=ws_idx)
@@ -330,11 +331,19 @@ def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, product_idx, a
 
 
 @then('wsIdx가 {ws_idx}인 광고주의 과금액은 {amount:d}원이다.')
-def check_click_count_by_ws_idx_and_creative_idx(context, ws_idx, amount):
+def check_ad_payment_amount(context, ws_idx, amount: int):
     query = SELECT_AMOUNT_TOTAL_BY_WS_IDX.format(ws_idx)
     result = select_one_click_house_query(query)
     ad_amount = AdAmount.getInstance(result)
-    assert ad_amount.total_payment == amount
+    assert_equals(ad_amount.total_payment, amount)
+
+
+@then('소재 단위리포트에서 wsIdx가 {ws_idx}인 광고주의 과금액은 {amount:d}원이다.')
+def check_ad_payment_by_creative_amount(context, ws_idx, amount: int):
+    query = SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX.format(ws_idx)
+    result = select_one_click_house_query(query)
+    assert_equals(result[0][1], amount)
+
 
 
 @then('테스트 데이터 생성이 완료되었다.')

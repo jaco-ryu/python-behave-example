@@ -1344,6 +1344,16 @@ AND  product_idx = {}
 GROUP BY ws_idx
 """
 
+SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX = """
+SELECT
+    ws_idx                                                          AS wsIdx,   /* 도매 아이디 */ 
+    ifNull(sum(vat_amount), 0)                                      AS price
+FROM dev_beluga.ad_payment_by_creative
+WHERE ws_idx = {}
+GROUP BY ws_idx
+-- product_idx
+"""
+
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
 SELECT sum(total_payment) / sum(count)
 FROM (
