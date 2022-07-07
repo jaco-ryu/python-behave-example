@@ -17,6 +17,7 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
     SELECT_CLICK_EXPOSE_COUNT, SELECT_LIKE_VISIT_COUNT, \
     SELECT_AMOUNT_TOTAL_BY_WS_IDX, SELECT_AMOUNT_BY_WS_IDX_AND_PRODUCT_IDX, \
     SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX, \
+    SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX_AND_PRODUCT_IDX, \
     LTA, LBA, WCK, CPC, CPM, \
     SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT, SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT_AND_PRODUCT, \
     SELECT_OPENLISTING_CLICK_RATE_BY_CREATED_AT, SELECT_SEARCHLISTING_CLICK_RATE_BY_CREATED_AT, \
@@ -337,9 +338,10 @@ def check_ad_payment_amount(context, ws_idx, amount: int):
     ad_amount = AdAmount.getInstance(result)
     assert_equals(ad_amount.total_payment, amount)
 
+
 @then('소재 단위리포트에서 wsIdx가 {ws_idx}인 광고주의 광고상품이 {product_idx:d}인 총 과금액은 {amount:d}원이다.')
 def check_ad_payment_by_creative_amount_with_product_idx(context, ws_idx, product_idx, amount):
-    query = SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX.format(ws_idx)
+    query = SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX_AND_PRODUCT_IDX.format(ws_idx, product_idx)
     result = select_one_click_house_query(query)
     assert_equals(result[0][1], amount)
 
@@ -349,7 +351,6 @@ def check_ad_payment_by_creative_amount(context, ws_idx, amount: int):
     query = SELECT_AMOUNT_TOTAL_IN_AD_PAYMENT_BY_CREARIVE_BY_WS_IDX.format(ws_idx)
     result = select_one_click_house_query(query)
     assert_equals(result[0][1], amount)
-
 
 
 @then('테스트 데이터 생성이 완료되었다.')
