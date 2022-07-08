@@ -147,13 +147,13 @@ def insert_brand_filter_log_raw_gck(
     pass
 
 
-@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 상단영역 찜이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
+@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 광고주의 광고상품이 {product_idx}인 상단영역 찜이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
 def insert_ad_action_lta(
-        context, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, row_count: int
+        context, ws_idx, creative_idx, product_idx: int, yyyy_mm_dd_hh_mm_ss, row_count: int
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LTA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss, CPC, LTA, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
@@ -173,13 +173,13 @@ def insert_ad_action_lba(
     pass
 
 
-@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 매장방문이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
+@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 광고주의 광고상품이 {product_idx}인 매장방문이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
 def insert_ad_action_visit(
-        context, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, row_count: int
+        context, ws_idx, creative_idx, product_idx, yyyy_mm_dd_hh_mm_ss, row_count: int
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, WCK, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
+            yyyy_mm_dd_hh_mm_ss, CPC, WCK, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
             yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)

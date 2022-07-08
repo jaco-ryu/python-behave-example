@@ -529,7 +529,7 @@ consumed_at
 '{}', 
 '{}', 
 132, 
-4, 
+{}, 
 'f2d3fc36-c71b-424b-82f2-a42c1e4b2e69', 
 '660321f7-fbb7-4c65-a94e-9526762cd466', 
 '{}', 
@@ -1441,6 +1441,7 @@ SELECT
     0                                                   AS VC
 FROM dev_beluga.ad_action
 WHERE wsidx = {}
+AND productidx = 4
 GROUP BY wsIdx
 )
 GROUP BY wsIdx
@@ -1474,6 +1475,7 @@ SELECT
     0                                                   AS VC
 FROM dev_beluga.ad_action
 WHERE wsidx = {}
+AND productidx = 4
 AND creativeidx = {}
 GROUP BY creativeIdx
 )
