@@ -377,8 +377,7 @@ def check_ad_payment_by_creative_amount(context, ws_idx, amount: int):
 def check_brand_ad_conversion(
         context, ws_idx: int, like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
 ):
-    query = BRAND_AD_CONVERSION_SELECT.format(ws_idx)
-    print(query)
+    query = BRAND_AD_CONVERSION_SELECT.format(ws_idx) # print(query)
     result = select_one_click_house_query(query)
     assert_equals(result[0][1], like_count)
     assert_equals(result[0][2], ws_visit_count)
@@ -420,8 +419,7 @@ def check_brand_ad_conversion_all_by_creative_idx(
         context, ws_idx: int, creative_idx: int,
         like_count: int, ws_visit_count: int, trade_request_count: int, viewer_count: int
 ):
-    query = BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX.format(ws_idx, creative_idx, ws_idx, creative_idx)
-    print(query)
+    query = BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX.format(ws_idx, creative_idx, ws_idx, creative_idx) # print(query)
     result = select_one_click_house_query(query)
     assert_equals(result[0][1], like_count)
     assert_equals(result[0][2], ws_visit_count)
