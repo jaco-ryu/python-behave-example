@@ -1392,27 +1392,27 @@ created_at
 BRAND_AD_CONVERSION_SELECT = """
 SELECT
     ws_idx                              AS wsIdx,
-    sum(toUInt32(ws_visit_count))       AS WCK,
     sum(toUInt32(like_count))           AS WISH,
+    sum(toUInt32(ws_visit_count))       AS WCK,
     sum(toUInt32(trade_request_count))  AS TRC,
     sum(toUInt32(viewer_count))         AS VC
 FROM dev_mysql_service_dm.brand_ad_conversion
 WHERE ws_idx = {}
+GROUP BY ws_idx
 """
 
 BRAND_AD_CONVERSION_SELECT_BY_CREATIVE_IDX = """
 SELECT
-    ws_idx                              AS wsIdx,
     creative_idx                        AS creativeIdx,
-    sum(toUInt32(ws_visit_count))       AS WCK,
     sum(toUInt32(like_count))           AS WISH,
+    sum(toUInt32(ws_visit_count))       AS WCK,
     sum(toUInt32(trade_request_count))  AS TRC,
     sum(toUInt32(viewer_count))         AS VC
 FROM dev_mysql_service_dm.brand_ad_conversion
 WHERE ws_idx = {}
 AND creative_idx = {}
+GROUP BY creative_idx
 """
-
 
 BRAND_AD_CONVERSION_ALL_SELECT = """
 SELECT
@@ -1431,21 +1431,23 @@ SELECT
     ifNull(sum(toUInt32(viewer_count)), 0)              AS VC
 FROM dev_mysql_service_dm.brand_ad_conversion
 WHERE ws_idx = {}
+GROUP BY wsIdx
+UNION ALL
 SELECT
-    ws_idx                                              AS wsIdx, 
+    wsidx                                               AS wsIdx, 
     ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS WISH,
     ifNull(sumIf(event = 'WCK', 1), 0)                  AS WCK,
     0                                                   AS TRC,
     0                                                   AS VC
 FROM dev_beluga.ad_action
-WHERE wsidx = {ws_idx}
+WHERE wsidx = {}
+GROUP BY wsIdx
 )
+GROUP BY wsIdx
 """
-
 
 BRAND_AD_CONVERSION_ALL_SELECT_BY_CREATIVE_IDX = """
 SELECT
-    wsIdx                                               AS wsIdx,
     creativeIdx                                         As creativeIdx,
     ifNull(sum(toUInt32(WISH)), 0)                      AS WISH,
     ifNull(sum(toUInt32(WCK)), 0)                       AS WCK,
@@ -1454,7 +1456,6 @@ SELECT
 FROM 
 (
 SELECT
-    ws_idx                                              AS wsIdx,
     creative_idx                                        AS creativeIdx,
     ifNull(sum(toUInt32(like_count)), 0)                AS WISH,
     ifNull(sum(toUInt32(ws_visit_count)), 0)            AS WCK,
@@ -1463,10 +1464,10 @@ SELECT
 FROM dev_mysql_service_dm.brand_ad_conversion
 WHERE ws_idx = {}
 AND creative_idx = {}
+GROUP BY creativeIdx
 UNION ALL
 SELECT
-    ws_idx                                              AS wsIdx,
-    creative_idx                                        AS creativeIdx, 
+    creativeidx                                         AS creativeIdx, 
     ifNull(sumIf(event = 'LTA' or event = 'LBA', 1), 0) AS WISH,
     ifNull(sumIf(event = 'WCK', 1), 0)                  AS WCK,
     0                                                   AS TRC,
@@ -1474,9 +1475,10 @@ SELECT
 FROM dev_beluga.ad_action
 WHERE wsidx = {}
 AND creativeidx = {}
+GROUP BY creativeIdx
 )
+GROUP BY creativeIdx
 """
-
 
 SELECT_AVERAGE_TOTAL_AMOUNT_BY_CREATED_AT = """
 SELECT sum(total_payment) / sum(count)
