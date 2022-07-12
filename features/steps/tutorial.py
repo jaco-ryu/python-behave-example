@@ -1,6 +1,7 @@
 import itertools
 
 from behave import *
+from datetime import datetime
 
 from MODEL.AdAmount import AdAmount
 
@@ -27,6 +28,10 @@ from QUERY.clickhouse import IMP, GCK, DDL, \
 
 counter = itertools.count()
 next(counter)
+
+
+def date_string_to_timestamp(arg: str):
+    return int(datetime.strptime(arg, "%Y-%m-%d %H:%M:%S").timestamp()) * 1000
 
 
 def assert_equals(actual, expected):
@@ -153,9 +158,11 @@ def insert_ad_action_lta(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LTA, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
-            yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LTA, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx,
+            date_string_to_timestamp(yyyy_mm_dd_hh_mm_ss),
+            creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
+        print(query)
         upsert_click_house_query(query)
     pass
 
@@ -179,8 +186,9 @@ def insert_ad_action_visit(
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, WCK, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
-            yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, WCK, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx,
+            date_string_to_timestamp(yyyy_mm_dd_hh_mm_ss),
+            creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass
