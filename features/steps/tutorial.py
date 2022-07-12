@@ -161,8 +161,7 @@ def insert_ad_action_lta(
             yyyy_mm_dd_hh_mm_ss, CPC, LTA, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx,
             date_string_to_timestamp(yyyy_mm_dd_hh_mm_ss),
             creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
-        )
-        print(query)
+        ) # print(query)
         upsert_click_house_query(query)
     pass
 
