@@ -166,14 +166,15 @@ def insert_ad_action_lta(
     pass
 
 
-@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 하단영역 찜이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
+@when('wsIdx가 {ws_idx}인 광고주에 소재아이디가 {creative_idx}인 광고주의 광고상품이 {product_idx}인 하단영역 찜이 {yyyy_mm_dd_hh_mm_ss}의 시점에 {row_count:d}회 발생했다.')
 def insert_ad_action_lba(
-        context, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss, row_count: int
+        context, ws_idx, creative_idx, product_idx: int, yyyy_mm_dd_hh_mm_ss, row_count: int
 ):
     for i in range(row_count):
         query = AD_ACTION_RAW_INSERT.format(
-            yyyy_mm_dd_hh_mm_ss, CPC, LBA, yyyy_mm_dd_hh_mm_ss, ws_idx, creative_idx, yyyy_mm_dd_hh_mm_ss,
-            yyyy_mm_dd_hh_mm_ss
+            yyyy_mm_dd_hh_mm_ss, CPC, LBA, product_idx, yyyy_mm_dd_hh_mm_ss, ws_idx,
+            date_string_to_timestamp(yyyy_mm_dd_hh_mm_ss),
+            creative_idx, yyyy_mm_dd_hh_mm_ss, yyyy_mm_dd_hh_mm_ss
         )
         upsert_click_house_query(query)
     pass

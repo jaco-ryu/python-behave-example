@@ -7,8 +7,6 @@ import math
 TARGET_URL = "localhost"
 
 DDL = """
-DROP DATABASE IF EXISTS dev_beluga;
-DROP DATABASE IF EXISTS dev_mysql_service_dm;
 DROP TABLE IF EXISTS dev_mysql_service_dm.brand_ad_conversion;
 DROP TABLE IF EXISTS dev_beluga.ad_action;
 DROP TABLE IF EXISTS dev_beluga.ad_payment;
@@ -16,6 +14,8 @@ DROP TABLE IF EXISTS dev_beluga.ad_payment_by_creative;
 DROP TABLE IF EXISTS dev_beluga.brand_filter_log_raw;
 DROP TABLE IF EXISTS dev_beluga.open_listing_filter_log_raw;
 DROP TABLE IF EXISTS dev_beluga.search_listing_filter_log_raw;
+DROP DATABASE IF EXISTS dev_beluga;
+DROP DATABASE IF EXISTS dev_mysql_service_dm;
 
 CREATE DATABASE IF NOT EXISTS dev_beluga;
 CREATE DATABASE IF NOT EXISTS dev_mysql_service_dm;
